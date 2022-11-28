@@ -53,15 +53,15 @@ $( document ).ready(function() {
 
 	    
 	    if (isNumber(char) && !numprec) {
-		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_numero") + "'>");
+		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_numero") + "' title='preambolo numero'>");
 	    } else if (char.toUpperCase() == char && isLetter(char)) {
-		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_maiuscola") + "'>");
+		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_maiuscola") + "' title='preambolo maiuscola'>");
 	    }
             
             if (char == '\n') {
 	    	$("#braille").append("<br>");
 	    } else {
-                $("#braille").append("<img src='" + baseurl.replace("##", "Braille_" + char) + "'>");
+                $("#braille").append("<img src='" + baseurl.replace("##", "Braille_" + char) + "' title='" + char.replaceAll("_"," ") + "'>");
 	    }
 
 	    numprec = isNumber(char);
