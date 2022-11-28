@@ -16,7 +16,7 @@
 
 <script>
 $( document ).ready(function() {
-    $("#testo").keyup(function() {
+    $("#testo").on('input',function() {
 	var baseurl="http://stylegraph.it/it/braille-online-generator/simboli/##.png";
 	$("#braille").empty();
 	var numprec=false;
