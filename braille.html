@@ -1,0 +1,82 @@
+<html>
+
+<head>
+<script
+  src="https://code.jquery.com/jquery-3.6.1.js"
+  integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+<h1>TRADUTTORE BRAILLE by Stefano</h1>
+
+<textarea id="testo" cols="40" rows="5"></textarea>
+<div id="braille" style="margin-top: 5px"></div>
+</body>
+</html>
+
+<script>
+$( document ).ready(function() {
+    $("#testo").keyup(function() {
+	var baseurl="http://stylegraph.it/it/braille-online-generator/simboli/##.png";
+	$("#braille").empty();
+	var numprec=false;
+	for (var i = 0; i < $("#testo").val().length; i++) {
+	    var char = $("#testo").val().charAt(i);
+	    if (char == ' ') {
+	    	char = "spazio";
+	    } else if (char == '$') {
+	    	char = "dollaro";
+	    } else if (char == '!') {
+	    	char = "esclamativo";
+	    } else if (char == '%') {
+	    	char = "percento";
+	    } else if (char == '/') {
+	    	char = "forward_slash";
+	    } else if (char == '(' || char == ')') {
+	    	char = "parentesi_tonda";
+	    } else if (char == '?') {
+	    	char = "interrogativo";
+	    } else if (char == ';') {
+	    	char = "punto_e_virgola";
+	    } else if (char == ':') {
+	    	char = "due_punti";
+	    } else if (char == ',') {
+	    	char = "virgola";
+	    } else if (char == '.') {
+	    	char = "punto";
+	    } else if (char == '-') {
+	    	char = "meno";
+	    } else if (char == '"') {
+	    	char = "quote_open";
+	    }
+
+
+	    
+	    if (isNumber(char) && !numprec) {
+		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_numero") + "'>");
+	    } else if (char.toUpperCase() == char && isLetter(char)) {
+		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_maiuscola") + "'>");
+	    }
+            
+            if (char == '\n') {
+	    	$("#braille").append("<br>");
+	    } else {
+                $("#braille").append("<img src='" + baseurl.replace("##", "Braille_" + char) + "'>");
+	    }
+
+	    numprec = isNumber(char);
+        }
+    });
+});
+
+function isLetter(str) {
+  return str.length === 1 && str.match(/[a-z]/i);
+}
+
+function isNumber(n){
+    return n != '\n' && Number(n) == n;
+}
+
+//http://stylegraph.it/it/braille-online-generator/simboli/Braille_a.png
+</script>
+
