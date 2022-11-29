@@ -75,9 +75,66 @@
 
 <script>
 
+$( document ).ready(function() { 
+
+	$("#testo").on('input',function() {
+		$("#braille").empty();
+		var numprec=false;
+		for (var i = 0; i < $("#testo").val().length; i++) {
+			var char = $("#testo").val().charAt(i);
+			var asc = $("#testo").val().charCodeAt(i);
+			if (asc >= 65 && asc <= 90) {
+				$("#braille").append(bimage(0));
+				asc += 32;
+			} else if (asc >= 48 && asc <= 57 && !numprec) {
+				$("#braille").append(bimage(1));
+			} else if (asc == 8364) {
+				$("#braille").append(bimage(2));
+			}
+			$("#braille").append(bimage(asc));
+			numprec = isNumber(char);
+		};
+	});
+	$("#bordi").click(function() {
+		$(".bdiv").toggleClass("bwhite");
+		$(".sign0").toggleClass("bwhite");
+	});
+});
+
+function bimage(n){
+	if (n == 32) {
+		return $("<div class='sdiv'></div>");
+	} else if (n == 10) {
+		return $("<div class='break'></div>");
+	}
+	var img = dict[n];
+	if (img == undefined) {
+		return $("<div class='bdiv center'>?</div>");
+	}
+	
+    var div=$("<div class='bdiv'></div>");
+	div.append("<div class='sign" + img.charAt(0) + "'></div>");
+	div.append("<div class='sign" + img.charAt(3) + "'></div>");
+	div.append("<div class='sign" + img.charAt(1) + "'></div>");
+	div.append("<div class='sign" + img.charAt(4) + "'></div>");
+	div.append("<div class='sign" + img.charAt(2) + "'></div>");
+	div.append("<div class='sign" + img.charAt(5) + "'></div>");
+
+	return div;
+}
+
+function isLetter(str) {
+  return str.length === 1 && str.match(/[a-z]/i);
+}
+
+function isNumber(n){
+    return n != '\n' && n != " " && Number(n) == n;
+}
+
 var dict = {
   0: "101000", //segna maiuscola
   1: "001111", //segna numero
+  2: "000100", //antepone euro
   97: "100000", //a
   98: "110000", //b
   99: "100100", //c
@@ -145,70 +202,8 @@ var dict = {
   60: "110001", //<
   176: "001011", //°
   37: "000101", //%
+  8364: "100010", //€
 };
-$( document ).ready(function() { 
-	//$("#braille").append(bimage);
-	//$("#braille").append(bimage);
-	
-	$("#testo").on('input',function() {
-		$("#braille").empty();
-		var numprec=false;
-		for (var i = 0; i < $("#testo").val().length; i++) {
-			var char = $("#testo").val().charAt(i);
-			if (isNumber(char) && !numprec) {
-				$("#braille").append(bimage(1));
-			}
-			var asc = $("#testo").val().charCodeAt(i);
-			if (asc >= 65 && asc <= 90) {
-				$("#braille").append(bimage(0));
-				asc += 32;
-			}
-			$("#braille").append(bimage(asc));
-			numprec = isNumber(char);
-		};
-	});
-	$("#bordi").click(function() {
-		$(".bdiv").toggleClass("bwhite");
-		$(".sign0").toggleClass("bwhite");
-	});
-});
-
-function bimage(n){
-	if (n == 32) {
-		return $("<div class='sdiv'></div>");
-	} else if (n == 10) {
-		return $("<div class='break'></div>");
-	}
-	var img = dict[n];
-	if (img == undefined) {
-		return $("<div class='bdiv center'>?</div>");
-	}
-	
-    var div=$("<div class='bdiv'></div>");
-	//div.append("<img class='bpoint' src='" + img.charAt(0) + ".png'>");
-	//div.append("<img class='bpoint' src='" + img.charAt(3) + ".png'>");
-	//div.append("<img class='bpoint' src='" + img.charAt(1) + ".png'>");
-	//div.append("<img class='bpoint' src='" + img.charAt(4) + ".png'>");
-	//div.append("<img class='bpoint' src='" + img.charAt(2) + ".png'>");
-	//div.append("<img class='bpoint' src='" + img.charAt(5) + ".png'>");
-	div.append("<div class='sign" + img.charAt(0) + "'></div>");
-	div.append("<div class='sign" + img.charAt(3) + "'></div>");
-	div.append("<div class='sign" + img.charAt(1) + "'></div>");
-	div.append("<div class='sign" + img.charAt(4) + "'></div>");
-	div.append("<div class='sign" + img.charAt(2) + "'></div>");
-	div.append("<div class='sign" + img.charAt(5) + "'></div>");
-
-	return div;
-}
-
-function isLetter(str) {
-  return str.length === 1 && str.match(/[a-z]/i);
-}
-
-function isNumber(n){
-    return n != '\n' && n != " " && Number(n) == n;
-}
-
-//http://stylegraph.it/it/braille-online-generator/simboli/Braille_a.png
+//http://stylegraph.it/public/file/Braille_Alphabet.pdf
 </script>
 
