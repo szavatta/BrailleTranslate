@@ -1,80 +1,212 @@
 <html>
 
 <head>
-<script
-  src="https://code.jquery.com/jquery-3.6.1.js"
-  integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
-  crossorigin="anonymous"></script>
+    <title>My HTML Document</title>
+
+	<script
+	  src="https://code.jquery.com/jquery-3.6.1.js"
+	  integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	  crossorigin="anonymous"></script>
+  
+    <style>
+        .bdiv { 
+			border: 1px solid;
+			width: 40px;
+			height: 55px;
+			display: flex;
+			flex-wrap: wrap;
+			padding-bottom: 4px;
+		}
+		.sdiv { 
+			border: 1px solid white;
+			width: 40px;
+			height: 55px;
+		}
+		.bpoint { 
+			padding-left: 5px;
+			padding-top: 5px;
+		}
+		.sign1 {
+			width: 10px;
+			height: 10px;
+			background-color: black;
+			border: 1px solid;
+			margin-top: 5px;
+			margin-left: 5px;
+			border-radius: 25px;
+		}
+		.sign0 {
+			width: 10px;
+			height: 10px;
+			background-color: white;
+			border: 1px solid;
+			margin-top: 5px;
+			margin-left: 5px;
+			border-radius: 25px;
+		}
+		#braille { 
+			margin-top: 5px;
+			display: flex;
+			flex-wrap: wrap;
+		}
+		.break {
+		  flex-basis: 100%;
+		  height: 0;
+		}
+		.bwhite {
+			border-color: white;
+		}
+		.center {
+			align-content: center;
+			justify-content: center;
+		}
+    </style>
+  
 </head>
 <body>
 <h1>TRADUTTORE BRAILLE by Stefano</h1>
-
+<div style="display: flex;">
 <textarea id="testo" cols="40" rows="5"></textarea>
-<div id="braille" style="margin-top: 5px"></div>
+<a href="#" id="bordi" style="margin-left: 10px">BORDI</a>
+</div>
+<div id="braille"></div>
 </body>
 </html>
 
 <script>
-$( document ).ready(function() {
-    $("#testo").on('input',function() {
-	var baseurl="http://stylegraph.it/it/braille-online-generator/simboli/##.png";
-	$("#braille").empty();
-	var numprec=false;
-	for (var i = 0; i < $("#testo").val().length; i++) {
-	    var char = $("#testo").val().charAt(i);
-	    if (char == ' ') {
-	    	char = "spazio";
-	    } else if (char == '$') {
-	    	char = "dollaro";
-	    } else if (char == '!') {
-	    	char = "esclamativo";
-	    } else if (char == '%') {
-	    	char = "percento";
-	    } else if (char == '/') {
-	    	char = "forward_slash";
-	    } else if (char == '(' || char == ')') {
-	    	char = "parentesi_tonda";
-	    } else if (char == '?') {
-	    	char = "interrogativo";
-	    } else if (char == ';') {
-	    	char = "punto_e_virgola";
-	    } else if (char == ':') {
-	    	char = "due_punti";
-	    } else if (char == ',') {
-	    	char = "virgola";
-	    } else if (char == '.') {
-	    	char = "punto";
-	    } else if (char == '-') {
-	    	char = "meno";
-	    } else if (char == '"') {
-	    	char = "quote_open";
-	    }
 
-
-	    
-	    if (isNumber(char) && !numprec) {
-		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_numero") + "' title='preambolo numero'>");
-	    } else if (char.toUpperCase() == char && isLetter(char)) {
-		$("#braille").append("<img src='" + baseurl.replace("##", "preambolo_maiuscola") + "' title='preambolo maiuscola'>");
-	    }
-            
-            if (char == '\n') {
-	    	$("#braille").append("<br>");
-	    } else {
-                $("#braille").append("<img src='" + baseurl.replace("##", "Braille_" + char) + "' title='" + char.replaceAll("_"," ") + "'>");
-	    }
-
-	    numprec = isNumber(char);
-        }
-    });
+var dict = {
+  0: "101000", //segna maiuscola
+  1: "001111", //segna numero
+  97: "100000", //a
+  98: "110000", //b
+  99: "100100", //c
+  100: "100110", //d
+  101: "100010", //e
+  102: "110100", //f
+  103: "110110", //g
+  104: "110010", //h
+  105: "010100", //i
+  106: "010110", //j
+  107: "101000", //k
+  108: "111000", //l
+  109: "101100", //m
+  110: "101110", //n
+  111: "101010", //o
+  112: "111100", //p
+  113: "111110", //q
+  114: "111010", //r
+  115: "011100", //s
+  116: "011110", //t
+  117: "101001", //u
+  118: "111001", //v
+  119: "010111", //w
+  120: "101101", //x
+  121: "101111", //y
+  122: "101011", //z
+  224: "111011", //à
+  232: "011101", //è
+  236: "001100", //ì
+  242: "001101", //ò
+  249: "011111", //ù
+  233: "111111", //é
+  49: "100000", //1
+  50: "110000", //2
+  51: "100100", //3
+  52: "100110", //4
+  53: "100010", //5
+  54: "110100", //6
+  55: "110110", //7
+  56: "110010", //8
+  57: "010100", //9
+  48: "010110", //0
+  44: "010000", //,
+  59: "011000", //;
+  58: "010010", //:
+  46: "010011", //.
+  63: "010001", //?
+  33: "011010", //!
+  222222: "011001", //«
+  42: "001010", //*
+  111122: "001011", //»
+  39: "001000", //'
+  45: "001001", //-
+  42: "011010", //*
+  43: "011001", //+
+  47: "010011", ///
+  61: "011011", //=
+  40: "010001", //(
+  41: "001010", //)
+  91: "111011", //[
+  93: "011111", //]
+  123: "111101", //{
+  125: "101111", //}
+  62: "001110", //>
+  60: "110001", //<
+  176: "001011", //°
+  37: "000101", //%
+};
+$( document ).ready(function() { 
+	//$("#braille").append(bimage);
+	//$("#braille").append(bimage);
+	
+	$("#testo").on('input',function() {
+		$("#braille").empty();
+		var numprec=false;
+		for (var i = 0; i < $("#testo").val().length; i++) {
+			var char = $("#testo").val().charAt(i);
+			if (isNumber(char) && !numprec) {
+				$("#braille").append(bimage(1));
+			}
+			var asc = $("#testo").val().charCodeAt(i);
+			if (asc >= 65 && asc <= 90) {
+				$("#braille").append(bimage(0));
+				asc += 32;
+			}
+			$("#braille").append(bimage(asc));
+			numprec = isNumber(char);
+		};
+	});
+	$("#bordi").click(function() {
+		$(".bdiv").toggleClass("bwhite");
+		$(".sign0").toggleClass("bwhite");
+	});
 });
+
+function bimage(n){
+	if (n == 32) {
+		return $("<div class='sdiv'></div>");
+	} else if (n == 10) {
+		return $("<div class='break'></div>");
+	}
+	var img = dict[n];
+	if (img == undefined) {
+		return $("<div class='bdiv center'>?</div>");
+	}
+	
+    var div=$("<div class='bdiv'></div>");
+	//div.append("<img class='bpoint' src='" + img.charAt(0) + ".png'>");
+	//div.append("<img class='bpoint' src='" + img.charAt(3) + ".png'>");
+	//div.append("<img class='bpoint' src='" + img.charAt(1) + ".png'>");
+	//div.append("<img class='bpoint' src='" + img.charAt(4) + ".png'>");
+	//div.append("<img class='bpoint' src='" + img.charAt(2) + ".png'>");
+	//div.append("<img class='bpoint' src='" + img.charAt(5) + ".png'>");
+	div.append("<div class='sign" + img.charAt(0) + "'></div>");
+	div.append("<div class='sign" + img.charAt(3) + "'></div>");
+	div.append("<div class='sign" + img.charAt(1) + "'></div>");
+	div.append("<div class='sign" + img.charAt(4) + "'></div>");
+	div.append("<div class='sign" + img.charAt(2) + "'></div>");
+	div.append("<div class='sign" + img.charAt(5) + "'></div>");
+
+	return div;
+}
 
 function isLetter(str) {
   return str.length === 1 && str.match(/[a-z]/i);
 }
 
 function isNumber(n){
-    return n != '\n' && Number(n) == n;
+    return n != '\n' && n != " " && Number(n) == n;
 }
 
 //http://stylegraph.it/it/braille-online-generator/simboli/Braille_a.png
