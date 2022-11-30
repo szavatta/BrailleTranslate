@@ -67,7 +67,7 @@
 <h1>TRADUTTORE BRAILLE by Stefano</h1>
 <div style="display: flex;">
 <textarea id="testo" cols="40" rows="5"></textarea>
-<a href="#" id="bordi" style="margin-left: 10px">BORDI</a>
+<a href="#" id="bordi" class="bwhite" style="margin-left: 10px">BORDI</a>
 </div>
 <div id="braille"></div>
 </body>
@@ -96,29 +96,39 @@ $( document ).ready(function() {
 		};
 	});
 	$("#bordi").click(function() {
-		$(".bdiv").toggleClass("bwhite");
-		$(".sign0").toggleClass("bwhite");
+		$(".bdiv,.sign0,#bordi").toggleClass("bwhite");
 	});
 });
 
 function bimage(n){
 	if (n == 32) {
-		return $("<div class='sdiv'></div>");
+		return $("<div class='sdiv' title='spazio'></div>");
 	} else if (n == 10) {
 		return $("<div class='break'></div>");
 	}
 	var img = dict[n];
 	if (img == undefined) {
-		return $("<div class='bdiv center'>?</div>");
+		return $("<div class='bdiv center' title='carattere non trovato'>?</div>");
 	}
 	
-    var div=$("<div class='bdiv'></div>");
+	var char = String.fromCharCode(n);
+	if (n == 0) {
+		char = "segna maiuscola";
+	} else if (n == 1) {
+		char = "segna numero";
+	} else if (n == 2) {
+		char = "antepone euro";
+	}
+    var div=$("<div class='bdiv' title='" + char + "'></div>");
 	div.append("<div class='sign" + img.charAt(0) + "'></div>");
 	div.append("<div class='sign" + img.charAt(3) + "'></div>");
 	div.append("<div class='sign" + img.charAt(1) + "'></div>");
 	div.append("<div class='sign" + img.charAt(4) + "'></div>");
 	div.append("<div class='sign" + img.charAt(2) + "'></div>");
 	div.append("<div class='sign" + img.charAt(5) + "'></div>");
+	
+	div.addClass($("#bordi").attr("class"));
+	div.find(".sign0").addClass($("#bordi").attr("class"));
 
 	return div;
 }
@@ -183,9 +193,9 @@ var dict = {
   46: "010011", //.
   63: "010001", //?
   33: "011010", //!
-  222222: "011001", //«
+  171: "011001", //«
   42: "001010", //*
-  111122: "001011", //»
+  187: "001011", //»
   39: "001000", //'
   45: "001001", //-
   42: "011010", //*
