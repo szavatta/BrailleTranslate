@@ -9,7 +9,7 @@
 	  crossorigin="anonymous"></script>
   
     <style>
-        .bdiv { 
+        .bdiv,#btest { 
 			border: 1px solid;
 			width: 40px;
 			height: 55px;
@@ -26,7 +26,7 @@
 			padding-left: 5px;
 			padding-top: 5px;
 		}
-		.sign1 {
+		.sign1,.tsign1 {
 			width: 10px;
 			height: 10px;
 			background-color: black;
@@ -35,7 +35,7 @@
 			margin-left: 5px;
 			border-radius: 25px;
 		}
-		.sign0 {
+		.sign0,.tsign0 {
 			width: 10px;
 			height: 10px;
 			background-color: white;
@@ -68,6 +68,9 @@
 <div style="display: flex;">
 <textarea id="testo" cols="40" rows="5"></textarea>
 <a href="#" id="bordi" class="bwhite" style="margin-left: 10px">BORDI</a>
+
+<div id="btest" style="margin-left: 30px"><div class="tsign tsign0"></div><div class="tsign tsign0"></div><div class="tsign tsign0"></div><div class="tsign tsign0"></div><div class="tsign tsign0"></div><div class="tsign tsign0"></div></div>
+<div id="ltest" style="margin-left: 10px"></div>
 </div>
 <div id="braille"></div>
 </body>
@@ -95,8 +98,19 @@ $( document ).ready(function() {
 			numprec = isNumber(char);
 		};
 	});
+	
 	$("#bordi").click(function() {
 		$(".bdiv,.sign0,#bordi").toggleClass("bwhite");
+		$("#testo").focus();
+	});
+	
+	$(".tsign").click(function() {
+		if ($(this).hasClass("tsign0")) {
+			$(this).removeClass("tsign0").addClass("tsign1");
+		} else {
+			$(this).removeClass("tsign1").addClass("tsign0");
+		}
+		$("#ltest").html(calcolaLettera());
 	});
 });
 
@@ -120,12 +134,9 @@ function bimage(n){
 		char = "antepone euro";
 	}
     var div=$("<div class='bdiv' title='" + char + "'></div>");
-	div.append("<div class='sign" + img.charAt(0) + "'></div>");
-	div.append("<div class='sign" + img.charAt(3) + "'></div>");
-	div.append("<div class='sign" + img.charAt(1) + "'></div>");
-	div.append("<div class='sign" + img.charAt(4) + "'></div>");
-	div.append("<div class='sign" + img.charAt(2) + "'></div>");
-	div.append("<div class='sign" + img.charAt(5) + "'></div>");
+	for (var i = 0; i < 6; i++) {
+		div.append("<div class='sign" + img.charAt(parseInt("031425".charAt(i))) + "'></div>");
+	}
 	
 	div.addClass($("#bordi").attr("class"));
 	div.find(".sign0").addClass($("#bordi").attr("class"));
@@ -141,8 +152,57 @@ function isNumber(n){
     return n != '\n' && n != " " && Number(n) == n;
 }
 
+function calcolaLettera(){
+
+	var dic = "";
+	var order = "024135";
+	for (var i = 0; i < order.length; i++) {
+		if ($($(".tsign")[parseInt(order.charAt(i))]).hasClass("tsign0")) {
+			dic += "0";
+		} else {
+			dic += "1";
+		}
+	}
+
+	var ret = "";
+	var idx = dict.getKeyByValue(dic);
+	if (idx == "0") {
+		ret = "segna maiuscola";
+	} else if (idx == "1") {
+		ret = "segna numero";
+	} else if (idx == "2") {
+		ret = "antepone euro";
+	} else {
+		ret = String.fromCharCode(dict.getKeyByValue(dic));
+		//ret = String.fromCharCode(getKeyByValue(dict, dic));
+	}
+	
+	
+	
+	return ret;
+}
+
+function getKeyByValue(object, value) {
+	return Object. keys(object). find(key => object[key] === value);
+}
+
+Object.prototype.getKeyByValue = function( value, number ) {
+	var arr=[];
+    for( var prop in this ) {
+        if( this.hasOwnProperty( prop ) ) {
+             if( this[ prop ] === value ) 
+				arr.push(prop);
+        }
+    }
+	if (number==true) {
+		return arr[0];
+	} else {
+		return arr.slice(-1)[0];
+	}
+}
+
 var dict = {
-  0: "101000", //segna maiuscola
+  0: "000101", //segna maiuscola
   1: "001111", //segna numero
   2: "000100", //antepone euro
   97: "100000", //a
